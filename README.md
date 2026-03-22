@@ -24,37 +24,94 @@ I wanted to create a UI language with:
 - versatile everywhere else, so outside of UI you should be able to do anything
     - rich standard library, supporting http, websockets, native io and system functions, etc out of the box
 
-## Example
+## Examples
+
+### Simple Counter w/ Styling
 
 ```mosaic
 template GlobalStyle {
-    set background = .black
-    set align      = .center
+  set background = .black
+  set align      = .center
 
-    Button {
-        set pad     = 4px
-        set rounded = .large
-    }
+  Button {
+    set pad     = 4px
+    set rounded = .large
+  }
     
-    set #dec.background = .red
-    set #inc.background = .green
+  set ^dec.background = .red
+  set ^inc.background = .green
 }
 
 component App {
-    use GlobalStyle
-    state count: uint = 0
+  use GlobalStyle
+  state count: uint = 0
+
+  Column {
+    Text { "Welcome to Mosaic" }
+
+    Row(pad: 4px, gap: 2px) {
+      ^dec = Button { "-" }
+        on click => count -= 1
+
+      Text { "Count: $count" }
+
+      ^inc = Button { "+" }
+        on click => count += 1
+    }
+  }
+}
+```
+
+### HTTP Requests & Lazy Loading
+
+```mosaic
+import std.http: get_json
+
+const BASE_URL = "https://myapi.com/api/v1"
+
+struct Item(parent_id: uint, name: string, description: string)
+
+async func fetch_items(id: uint) -> List<Item> {
+  let url = BASE_URL + "/items"
+  let .list(resp) = await get_json(url) else {
+    return List()
+  }
+  return resp.map(func(entry) {
+    Item(parent_id: id, name: entry["name"], url: entry["url"])
+  })
+}
+
+component ItemEntry {
+  property item: Item
+  state checked: false
+
+  Row(pad: 4px, gap: 4px) {
+    Checkbox()
+      bind checked
 
     Column {
-        Text { "Welcome to Mosaic" }
-        Row(pad: 4px, gap: 2px) {
-            ^dec = Button { "-" }
-                on click => count -= 1
-
-            Text { "Count: $count" }
-
-            ^inc = Button { "+" }
-                on click => count -= 1
-        }
+      Text(font: .(size: 1.2em)) { item.name }
+      Text(font: .(size: 0.7em)) { item.description }
     }
+  }
+}
+
+component ItemsList {
+  async computed items: List<Item> = {
+    await fetch_items()
+  }
+
+  Column(gap: 2px) {
+    if let items = items {
+      for item in items { Item(item: item) }
+    } else {
+      Text { "Loading..." }
+    }
+  }
+}
+
+@entry
+component App {
+  ItemsList()
 }
 ```
