@@ -50,18 +50,18 @@ impl SourceCache {
 
     /// Returns the filename for the source file associated with the given [`SourceId`].
     pub fn name(&self, id: SourceId) -> &str {
-        &self.files[id.0 as usize].name
+        &self.files[id.0].name
     }
 
     /// Returns the full source text for the source file associated with the given [`SourceId`].
     pub fn source(&self, id: SourceId) -> &str {
-        &self.files[id.0 as usize].source
+        &self.files[id.0].source
     }
 
     /// Returns the text covered by a span.
     pub fn span_text(&self, span: Span) -> &str {
         let source = self.source(span.source);
-        &source[span.start as usize..span.end as usize]
+        &source[span.start..span.end]
     }
 
     /// Converts a byte offset within a file to a [`LineCol`].
@@ -95,10 +95,10 @@ impl SourceCache {
             Err(next) => next - 1,
         };
 
-        let start = line_starts[line_idx] as usize;
+        let start = line_starts[line_idx];
         let end = line_starts
             .get(line_idx + 1)
-            .map(|&s| s as usize)
+            .copied()
             .unwrap_or(file.source.len());
 
         // trim trailing newline (i.e. preceding trailing newlines, consider it eof)
@@ -122,7 +122,7 @@ fn compute_line_starts(source: &str) -> Vec<usize> {
     let mut starts = vec![0];
     for (i, byte) in source.bytes().enumerate() {
         if byte == b'\n' {
-            starts.push(i as usize + 1);
+            starts.push(i + 1);
         }
     }
     starts
