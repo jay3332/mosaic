@@ -1,0 +1,7 @@
+[package]
+name = "mosaic_grammar"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+mosaic_diagnostics = { path = "../mosaic_diagnostics" }

@@ -1,0 +1,3 @@
+[workspace]
+resolver = "3"
+members = ["crates/mosaic_diagnostics", "crates/mosaic_grammar"]

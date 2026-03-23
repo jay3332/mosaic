@@ -69,16 +69,11 @@ import std.http: get_json
 
 const BASE_URL = "https://myapi.com/api/v1"
 
+@derive(Deserializable)
 struct Item(parent_id: uint, name: string, description: string)
 
 async func fetch_items(id: uint) -> List<Item> {
-  let url = BASE_URL + "/items"
-  let .list(resp) = await get_json(url) else {
-    return List()
-  }
-  return resp.map(func(entry) {
-    Item(parent_id: id, name: entry["name"], url: entry["url"])
-  })
+  return await get_json<List<Item>>(BASE_URL + "/items/$id")
 }
 
 component ItemEntry {
@@ -96,6 +91,7 @@ component ItemEntry {
   }
 }
 
+@entry
 component ItemsList {
   async computed items: List<Item> = {
     await fetch_items()
@@ -108,10 +104,5 @@ component ItemsList {
       Text { "Loading..." }
     }
   }
-}
-
-@entry
-component App {
-  ItemsList()
 }
 ```
