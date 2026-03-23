@@ -33,12 +33,12 @@ impl Span {
 
     /// Creates a new span that covers both `self` and `other`.
     /// Panics if the two spans come from different source files.
-    pub fn merge(self, other: Span) -> Span {
+    pub fn merge(self, other: Self) -> Self {
         debug_assert_eq!(
             self.source, other.source,
             "cannot merge spans from different sources"
         );
-        Span {
+        Self {
             source: self.source,
             start: self.start.min(other.start),
             end: self.end.max(other.end),
@@ -46,8 +46,8 @@ impl Span {
     }
 
     /// Returns a zero-width span at the start of this span.
-    pub const fn start_point(&self) -> Span {
-        Span {
+    pub const fn start_point(&self) -> Self {
+        Self {
             source: self.source,
             start: self.start,
             end: self.start,
@@ -55,8 +55,8 @@ impl Span {
     }
 
     /// Returns a zero-width span at the end of this span.
-    pub const fn end_point(&self) -> Span {
-        Span {
+    pub const fn end_point(&self) -> Self {
+        Self {
             source: self.source,
             start: self.end,
             end: self.end,

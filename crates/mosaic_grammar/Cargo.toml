@@ -5,3 +5,6 @@ edition = "2024"
 
 [dependencies]
 mosaic_diagnostics = { path = "../mosaic_diagnostics" }
+
+[lints]
+workspace = true
