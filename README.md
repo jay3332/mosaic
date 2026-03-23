@@ -31,10 +31,10 @@ I wanted to create a UI language with:
 ```mosaic
 template GlobalStyle {
   set background = .black
-  set align      = .center
+  set align = .center
 
   Button {
-    set pad     = 4px
+    set pad = 4px
     set rounded = .large
   }
     
@@ -83,7 +83,7 @@ async func fetch_items(id: uint) -> List<Item> {
 
 component ItemEntry {
   property item: Item
-  state checked: false
+  state checked = false
 
   Row(pad: 4px, gap: 4px) {
     Checkbox()
