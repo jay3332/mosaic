@@ -1,28 +1,33 @@
-# mosaic
+# Mosaic
 Modern cross-platform scripting language for creating native GUIs, written in Rust.
 
 ## Why Mosaic?
 
 I started this project as a way for me to become more familiar with compilers and low-level GUI rendering.
-I wanted to create a UI language with:
+The goal was to create a UI language with:
 
-- semantics, a type system, and developer tooling inspired by Rust
-- effortless memory safety inspired by Swift (i.e. reference counted)
-- declarative UI markup inspired by SwiftUI, Jetpack Compose, and Flutter
-- components, state, context, and event system inspired by React
-- declarative rule-based styling inspired by CSS
-- first-class async/await and lazy UI rendering
-- easy integration with LLMs
+- Semantics, a type system, and developer tooling inspired by Rust
+- Effortless memory safety inspired by Swift (i.e. reference counted)
+- Declarative UI markup inspired by SwiftUI, Jetpack Compose, and Flutter
+- Components, state, context, and event system inspired by React
+- Declarative rule-based styling inspired by CSS
+- First-class async/await and lazy UI rendering
+- Easy integration with LLMs
 
 ### Features
 
-- strongly and statically typed, with a Rust-inspired subtyping system using structs, enums, traits, and impls
+- Strongly and statically typed, with a Rust-inspired subtyping system using structs, enums, traits, and impls
 - UI-first design with first-class components, reactive states, context, events, and component modifiers
-- explicit optionals and results, similar to Rust (essentially no concept of "null")
-- everything is immutable by default
-- can compile to HTML/CSS/JS for the web as well as native targets (desktop, mobile)
-- versatile everywhere else, so outside of UI you should be able to do anything
-    - rich standard library, supporting http, websockets, native io and system functions, etc out of the box
+- Explicit optionals and results, similar to Rust (essentially no concept of "null")
+- Everything is immutable by default
+- Rich packaging and module system
+- Hot reloading and devtools (inspect element, console)
+- Either AoT and JIT compiled through a common IR/debuginfo
+- Choose your own allocator and event loop implementations (or use the default one)
+    - Support for multithreading and GPU execution for native targets
+- Can compile to HTML/CSS/JS for the web as well as native targets (desktop, mobile)
+- Versatile everywhere else, so outside of UI you should be able to do anything
+    - Rich standard library, supporting HTTP, WebSockets, native IO and system functions, etc. out of the box
 
 ## Examples
 
@@ -99,7 +104,7 @@ component ItemsList {
 
   Column(gap: 2px) {
     if let items = items {
-      for item in items { Item(item: item) }
+      for item in items { ItemEntry(item: item) }
     } else {
       Text { "Loading..." }
     }

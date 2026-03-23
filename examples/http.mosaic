@@ -32,7 +32,7 @@ component ItemsList {
 
   Column(gap: 2px) {
     if let items = items {
-      for item in items { Item(item: item) }
+      for item in items { ItemEntry(item: item) }
     } else {
       Text { "Loading..." }
     }
