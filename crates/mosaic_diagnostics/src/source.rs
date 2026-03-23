@@ -69,7 +69,6 @@ impl SourceCache {
         let file = &self.files[id.0];
         let line_starts = &file.line_starts;
 
-        // Binary search for the line containing this offset.
         let line_idx = match line_starts.binary_search(&offset) {
             Ok(exact) => exact,
             Err(next) => next - 1,
@@ -81,12 +80,12 @@ impl SourceCache {
         }
     }
 
-    /// Returns the 1-based line and column for the start of a span.
+    /// Returns the 1-based line and column for the start of a span
     pub fn span_start(&self, span: Span) -> LineCol {
         self.line_col(span.source, span.start)
     }
 
-    /// Returns the full text of the line containing a given byte offset.
+    /// Returns the full text of the line containing a given byte offset
     pub fn source_line(&self, id: SourceId, offset: usize) -> &str {
         let file = &self.files[id.0];
         let line_starts = &file.line_starts;
@@ -102,13 +101,13 @@ impl SourceCache {
             .map(|&s| s as usize)
             .unwrap_or(file.source.len());
 
-        // Trim trailing newline characters.
+        // trim trailing newline (i.e. preceding trailing newlines, consider it eof)
         file.source[start..end].trim_end_matches(['\n', '\r'])
     }
 
-    /// Returns the number of lines in a source file.
+    /// Returns the number of lines in the source file associated with the given [`SourceId`].
     pub fn line_count(&self, id: SourceId) -> usize {
-        self.files[id.0 as usize].line_starts.len()
+        self.files[id.0].line_starts.len()
     }
 }
 
