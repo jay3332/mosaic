@@ -2,7 +2,7 @@ import std.http: get_json
 
 const BASE_URL = "https://myapi.com/api/v1"
 
-@derive(Deserializable)
+@derive(Deserialize)
 struct Item(parent_id: uint, name: string, description: string)
 
 async func fetch_items(id: uint) -> List<Item> {
