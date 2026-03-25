@@ -1,0 +1,349 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Mosaic",
+  "scopeName": "source.mosaic",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#annotations" },
+    { "include": "#strings" },
+    { "include": "#characters" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#types" },
+    { "include": "#functions" },
+    { "include": "#operators" },
+    { "include": "#punctuation" },
+    { "include": "#identifiers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.mosaic",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.line.documentation.mosaic",
+          "match": "///.*$"
+        },
+        {
+          "name": "comment.block.mosaic",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "patterns": [
+            { "include": "#comments" }
+          ]
+        }
+      ]
+    },
+    "annotations": {
+      "patterns": [
+        {
+          "name": "meta.annotation.mosaic",
+          "match": "(@)(\\w+)",
+          "captures": {
+            "1": { "name": "punctuation.definition.annotation.mosaic" },
+            "2": { "name": "entity.name.annotation.mosaic" }
+          }
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.raw.mosaic",
+          "begin": "r#\"",
+          "end": "\"#",
+          "patterns": []
+        },
+        {
+          "name": "string.quoted.double.raw.mosaic",
+          "begin": "r\"",
+          "end": "\"",
+          "patterns": []
+        },
+        {
+          "name": "string.quoted.double.raw.hashed.mosaic",
+          "begin": "#\"",
+          "end": "\"#",
+          "patterns": [
+            { "include": "#string-interpolation" }
+          ]
+        },
+        {
+          "name": "string.quoted.double.mosaic",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "include": "#string-escape" },
+            { "include": "#string-interpolation" }
+          ]
+        }
+      ]
+    },
+    "string-escape": {
+      "patterns": [
+        {
+          "name": "constant.character.escape.mosaic",
+          "match": "\\\\(n|r|t|\\\\|\"|0|'|\\$|u\\{[0-9a-fA-F]+\\})"
+        },
+        {
+          "name": "constant.character.escape.newline.mosaic",
+          "match": "\\\\\\s*\\n"
+        }
+      ]
+    },
+    "string-interpolation": {
+      "patterns": [
+        {
+          "name": "meta.interpolation.mosaic",
+          "begin": "(\\$)\\{",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.interpolation.begin.mosaic" }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.interpolation.end.mosaic" }
+          },
+          "patterns": [
+            { "include": "source.mosaic" }
+          ]
+        },
+        {
+          "name": "meta.interpolation.mosaic",
+          "match": "(\\$)(\\w+)",
+          "captures": {
+            "1": { "name": "punctuation.definition.interpolation.mosaic" },
+            "2": { "name": "variable.other.interpolated.mosaic" }
+          }
+        }
+      ]
+    },
+    "characters": {
+      "patterns": [
+        {
+          "name": "string.quoted.single.mosaic",
+          "match": "'(\\\\(n|r|t|\\\\|'|0|\"|u\\{[0-9a-fA-F]+\\})|[^'\\\\])'",
+          "captures": {
+            "1": { "name": "constant.character.mosaic" }
+          }
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex-color.mosaic",
+          "match": "#[0-9a-fA-F]{3,8}\\b"
+        },
+        {
+          "name": "constant.numeric.length.mosaic",
+          "match": "\\b[0-9][0-9_]*(\\.[0-9][0-9_]*)?(px|em|rem|%)\\b"
+        },
+        {
+          "name": "constant.numeric.duration.mosaic",
+          "match": "\\b[0-9][0-9_]*(\\.[0-9][0-9_]*)?(ms|s)\\b"
+        },
+        {
+          "name": "constant.numeric.hex.mosaic",
+          "match": "\\b0x[0-9a-fA-F][0-9a-fA-F_]*\\b"
+        },
+        {
+          "name": "constant.numeric.octal.mosaic",
+          "match": "\\b0o[0-7][0-7_]*\\b"
+        },
+        {
+          "name": "constant.numeric.binary.mosaic",
+          "match": "\\b0b[01][01_]*\\b"
+        },
+        {
+          "name": "constant.numeric.float.mosaic",
+          "match": "\\b[0-9][0-9_]*\\.[0-9][0-9_]*([eE][+-]?[0-9][0-9_]*)?\\b"
+        },
+        {
+          "name": "constant.numeric.float.scientific.mosaic",
+          "match": "\\b[0-9][0-9_]*[eE][+-]?[0-9][0-9_]*\\b"
+        },
+        {
+          "name": "constant.numeric.integer.mosaic",
+          "match": "\\b[0-9][0-9_]*\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.flow.mosaic",
+          "match": "\\b(if|else|then|match|case|for|in|while|loop|break|continue|return)\\b"
+        },
+        {
+          "name": "keyword.declaration.mosaic",
+          "match": "\\b(let|var|const|func|struct|enum|trait|impl|component|type|extern|module)\\b"
+        },
+        {
+          "name": "keyword.other.import.mosaic",
+          "match": "\\b(import|from)\\b"
+        },
+        {
+          "name": "storage.modifier.mosaic",
+          "match": "\\b(pub|pkg|mut|owned|weak|ref|async|await)\\b"
+        },
+        {
+          "name": "keyword.operator.expression.mosaic",
+          "match": "\\b(as|is|throw|try|catch)\\b"
+        },
+        {
+          "name": "keyword.other.view.mosaic",
+          "match": "\\b(on|bind|use|set|with)\\b"
+        },
+        {
+          "name": "keyword.other.soft.mosaic",
+          "match": "\\b(state|property|computed|event|slot|template|context|consume|native|provide|emit|attach|transition|animate|shallow|deep|mount|unmount|view|when|op)\\b"
+        },
+        {
+          "name": "constant.language.mosaic",
+          "match": "\\b(true|false|none)\\b"
+        },
+        {
+          "name": "variable.language.self.mosaic",
+          "match": "\\b(self)\\b"
+        },
+        {
+          "name": "entity.name.type.self.mosaic",
+          "match": "\\b(Self)\\b"
+        },
+        {
+          "name": "keyword.reserved.mosaic",
+          "match": "\\b(macro|where|static|unsafe|yield|spawn|select|defer|protocol|extension|super)\\b"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "storage.type.primitive.mosaic",
+          "match": "\\b(int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|float|float32|float64|bool|char|string|length|duration|color)\\b"
+        },
+        {
+          "name": "entity.name.type.mosaic",
+          "match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "meta.function.definition.mosaic",
+          "match": "\\b(func)\\s+([a-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.declaration.mosaic" },
+            "2": { "name": "entity.name.function.mosaic" }
+          }
+        },
+        {
+          "name": "meta.function.call.mosaic",
+          "match": "\\b([a-z_][A-Za-z0-9_]*)\\s*(?=\\()",
+          "captures": {
+            "1": { "name": "entity.name.function.call.mosaic" }
+          }
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.assignment.mosaic",
+          "match": "(\\+=|-=|\\*=|/=|%=|=(?!=))"
+        },
+        {
+          "name": "keyword.operator.comparison.mosaic",
+          "match": "(==|!=|<=|>=|<|>)"
+        },
+        {
+          "name": "keyword.operator.logical.mosaic",
+          "match": "(&&|\\|\\||!(?!=))"
+        },
+        {
+          "name": "keyword.operator.arithmetic.mosaic",
+          "match": "(\\+\\+|--|\\+|-|\\*|/|%)"
+        },
+        {
+          "name": "keyword.operator.bitwise.mosaic",
+          "match": "(<<|>>|&(?!&)|\\|(?!\\|)|\\^|~)"
+        },
+        {
+          "name": "keyword.operator.arrow.mosaic",
+          "match": "(->|=>)"
+        },
+        {
+          "name": "keyword.operator.range.mosaic",
+          "match": "(\\.\\.\\.|\\.\\.[=]|\\.\\.|\\?\\.)"
+        },
+        {
+          "name": "keyword.operator.optional.mosaic",
+          "match": "(\\?\\?|\\?)"
+        },
+        {
+          "name": "variable.other.anonymous.mosaic",
+          "match": "\\$(?=\\.|\\w)"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.separator.dot.mosaic",
+          "match": "\\."
+        },
+        {
+          "name": "punctuation.separator.comma.mosaic",
+          "match": ","
+        },
+        {
+          "name": "punctuation.separator.colon.mosaic",
+          "match": ":"
+        },
+        {
+          "name": "punctuation.terminator.semicolon.mosaic",
+          "match": ";"
+        },
+        {
+          "name": "punctuation.section.braces.begin.mosaic",
+          "match": "\\{"
+        },
+        {
+          "name": "punctuation.section.braces.end.mosaic",
+          "match": "\\}"
+        },
+        {
+          "name": "punctuation.section.parens.begin.mosaic",
+          "match": "\\("
+        },
+        {
+          "name": "punctuation.section.parens.end.mosaic",
+          "match": "\\)"
+        },
+        {
+          "name": "punctuation.section.brackets.begin.mosaic",
+          "match": "\\["
+        },
+        {
+          "name": "punctuation.section.brackets.end.mosaic",
+          "match": "\\]"
+        },
+        {
+          "name": "punctuation.definition.marker.mosaic",
+          "match": "\\^"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.mosaic",
+          "match": "\\b[a-z_][A-Za-z0-9_]*\\b"
+        }
+      ]
+    }
+  }
+}

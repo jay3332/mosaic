@@ -1,0 +1,37 @@
+{
+  "name": "mosaic-vscode-syntax",
+  "displayName": "Mosaic",
+  "description": "Syntax highlighting for Mosaic",
+  "version": "0.1.0",
+  "publisher": "jay3332",
+  "author": {
+    "name": "jay3332",
+    "url": "https://jay3332.tech"
+  },
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "icon": "assets/logo.png",
+  "categories": ["Programming Languages"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "mosaic",
+        "aliases": ["Mosaic", "mosaic"],
+        "extensions": [".mosaic", ".mos", ".ms"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./assets/icon.png",
+          "dark": "./assets/icon.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mosaic",
+        "scopeName": "source.mosaic",
+        "path": "./syntaxes/mosaic.tmLanguage.json"
+      }
+    ]
+  }
+}
