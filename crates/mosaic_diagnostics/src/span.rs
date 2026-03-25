@@ -91,7 +91,7 @@ impl<T> Spanned<T> {
     }
 
     /// Returns a reference to the inner value with the same span.
-    pub fn as_ref(&self) -> Spanned<&T> {
+    pub const fn as_ref(&self) -> Spanned<&T> {
         Spanned {
             node: &self.node,
             span: self.span,

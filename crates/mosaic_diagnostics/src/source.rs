@@ -37,7 +37,7 @@ pub struct SourceCache {
 }
 
 impl SourceCache {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self { files: Vec::new() }
     }
 
