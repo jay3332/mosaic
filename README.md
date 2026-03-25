@@ -1,5 +1,14 @@
-# Mosaic
-Modern cross-platform scripting language for creating native GUIs, written in Rust.
+<h1 align="center">
+    <img src="/branding/banner.png" alt="mosaic banner" />
+    Mosaic
+</h1>
+<p align="center">
+    <sup>
+        Modern cross-platform scripting language for creating native GUIs, written in Rust.
+    </sup>
+</p>
+
+----
 
 ## Why Mosaic?
 
