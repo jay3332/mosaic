@@ -198,7 +198,7 @@
         },
         {
           "name": "keyword.other.soft.mosaic",
-          "match": "\\b(state|property|computed|event|slot|template|context|consume|native|provide|emit|attach|transition|animate|shallow|deep|mount|unmount|view|when|op)\\b"
+          "match": "\\b(state|property|computed|event|slot|template|context|consume|native|provide|emit|attach|transition|animate|shallow|deep|mount|unmount|view|when|watch|op)\\b"
         },
         {
           "name": "constant.language.mosaic",

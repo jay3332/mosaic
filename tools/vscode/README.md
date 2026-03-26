@@ -1,0 +1,1 @@
+# Mosaic for Visual Studio Code
