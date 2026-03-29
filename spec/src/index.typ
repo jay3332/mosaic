@@ -10,6 +10,10 @@
   stroke: 1pt + luma(80%),
   it
 )
+#set table(
+  stroke: 0.5pt + luma(50%),
+  inset: 0.5em,
+)
 
 #let revision-date = [March 25, 2026]
 #let edition = "0"
@@ -256,6 +260,11 @@ There are three types of keywords in Mosaic:
 - *reserved keywords* are words that cannot be used as identifiers depsite not being keywords. 
   They are reserved for potential future use.
 
+#grammar("Keywords")[
+  _Keywords are represented in the grammar as literal strings, 
+  e.g. #raw("\"let\"", lang: "bnf")_.
+]
+
 == Literals
 
 A *literal* describes a fixed value in Mosaic source code. Mosaic has the following types of literals:
@@ -266,9 +275,108 @@ A *literal* describes a fixed value in Mosaic source code. Mosaic has the follow
 
 === String Literals
 
+#pagebreak()
+
 = Types
 
 == Primitive Types
+
+A *primitive type* is a fundamental type that is built into Mosaic. All primitive types implement the #mos("Copy") trait, which means they are by default passed by value.
+
+=== Integer Types
+
+#table(
+  columns: (1fr, 1fr, 2fr),
+  table.header[*Type*][*Size*][*Range*],
+  mos("int"), "pointer sized", [
+    Platform-sized signed integer #footnote[
+      The sizes of #mos("int") and #mos("uint") are target-specific. 
+      For native targets, they are 32 bits on 32-bit platforms and 64 bits on 64-bit platforms. For web targets, they are treated as 32-bit integers such that they fit well within the $[-2^53 + 1, 2^53 - 1]$ safe integer range for JavaScript numbers.
+    ] <int-type>
+  ],
+  mos("int8"), "8 bits (1 byte)", $[-128, 127]$,
+  mos("int16"), "16 bits (2 bytes)", $[-32768, 32767]$,
+  mos("int32"), "32 bits (4 bytes)", $[-2^31, 2^31 - 1]$,
+  mos("int64"), "64 bits (8 bytes)", $[-2^63, 2^63 - 1]$,
+  mos("uint"), "pointer sized", [Platform-sized unsigned integer #footnote(<int-type>)],
+  mos("uint8"), "8 bits (1 byte)", $[0, 255]$,
+  mos("uint16"), "16 bits (2 bytes)", $[0, 65535]$,
+  mos("uint32"), "32 bits (4 bytes)", $[0, 2^32 - 1]$,
+  mos("uint64"), "64 bits (8 bytes)", $[0, 2^64 - 1]$,
+)
+
+#note[
+  For transpilation into JavaScript, all integer types that are 32 bits or smaller are represented as JavaScript `Number`s (which are technically 64-bit floating point values.) 64-bit integer types are represented as JavaScript `BigInt`s. Mosaic must proactively convert between `Number` and `BigInt` during transpilation.
+]
+
+=== Floating Point Types
+
+All floating point types in Mosaic follow the IEEE 754 standard for binary floating point arithmetic.
+
+#table(
+  columns: (1fr, 1.5fr, 2fr, 2fr),
+  table.header[*Type*][*Size*][*Range*][*Precision*],
+  mos("float32"), "32 bits (4 bytes)", $[1.18 times 10^-38, 3.4 times 10^38]$, "Single precision (~6 digits)",
+  mos("float64"), "64 bits (8 bytes)", $[2.23 times 10^-308, 1.8 times 10^308]$, "Double precision (~15 digits)",
+  [#mos("float") #footnote[
+    #mos("float") is _always_ an alias for #mos("float64").
+  ]], 
+  "64 bits (8 bytes)", [Same as #mos("float64")], [Same as #mos("float64")],
+)
+
+=== Boolean Type
+
+The #mos("bool") type has two possible values: #mos("true") and #mos("false"). Its definition is roughly equivalent to:
+
+```mos
+enum bool: uint8 {
+    case false = 0
+    case true  = 1
+}
+const true = bool.true
+const false = bool.false
+```
+
+=== Character Type
+
+The #mos("char") type represents a single Unicode scalar value. It is a 32-bit type that can represent any _valid_ Unicode code point. That is:
+- any codepoint within the Unicode range of `U+0000` to `U+10FFFF`, inclusive
+- ...*except* for the surrogate code points from `U+D800` to `U+DFFF`, inclusive 
+
+Trying to create a #mos("char") which does not contain a valid Unicode scalar value 
+will result in a panic in debug mode, and undefined behavior in release mode.
+
+=== String Type
+
+A #mos("string") is a length-based UTF-8 encoded string. The contents of a #mos("string") are immutable. Interally, a #mos("string") is represented as a 
+length-based "slice" to a sequence of UTF-8-validated bytes:
+```mos
+struct string {
+    ptr: *const uint8 // pointer to the first byte of the string
+    pub size: uint    // number of bytes in the string
+}
+```
+
+#note[
+  Like all primitive types, #mos("string") implements the #mos("Copy") trait, so it is passed by value. However, since a #mos("string") is effectively a pointer to the first byte of the string, does not actually copy the string.
+]
+
+#warning[
+  The `size` field of a #mos("string") represents the number of *bytes* in the string, not the number of characters in the string. 
+  To get the number of characters, use the #mos("string.len") method, e.g. #mos("my_str.len()").
+]
+ 
+=== Unit Type
+
+The unit type, denoted by #mos("void"), is a type that has only one value, which is also denoted by #mos("void") (the _void literal_). It is used to indicate the absence of a meaningful value, similar to `()` in Rust.
+
+== Compound Types
+
+=== Array Type
+
+=== Slice Type
+
+=== Tuples
 
 == Type Aliases
 
@@ -356,6 +464,15 @@ The types of the parameters can be omitted if they can be inferred from context:
 let add: func(int, int) -> int 
 add = func(x, y) => x + y // infer x: int, y: int from the type of `add`
 ```
+
+#grammar("Anonymous Function")[
+  ```bnf
+  anonymous_function ::= "func" "(" parameter_list? ")" 
+                         ( "{" block "}" | "=>" expression );
+  parameter_list     ::= parameter ("," parameter)*;
+  parameter          ::= identifier (":" type)?;
+  ```
+]
 
 === Closures and Capturing Variables
 
@@ -660,7 +777,6 @@ Mosaic supports interoperability with native code and libraries via a *foreign f
 
 #table(
   columns: (1fr, 4fr),
-  stroke: 0.5pt + luma(50%),
   table.header[*Convention*][*Description*],
   mos("extern(\"c\")"), [Call the function with the C calling convention (CDECL).],
   mos("extern(\"js\")"), [The function corresponds to a JavaScript function. (web target only)],
@@ -673,5 +789,14 @@ Mosaic supports interoperability with native code and libraries via a *foreign f
 = Appendix A: Standard Library
 
 = Appendix B: Native Components
+
+```mos
+native component Button {
+    property fill: Fill
+    property stroke: Stroke
+    
+    event click(e: ClickEvent)
+}
+```
 
 = Appendix C: Grammar
